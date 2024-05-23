@@ -29,3 +29,114 @@ const memoryPictureUrls = [
 ];
 */
 // 4. Når spillet er forbi, brug confetti.js til at vise confetti på skærmen. Mere info her : https://github.com/abelmoricz/abelmoricz.github.io/tree/9eac02160de7bb57170441a441db96b36e8341d8/confetti.js-master
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+const memoryPictureUrls = [
+	"https://picsum.photos/seed/memory_1/300/300",
+	"https://picsum.photos/seed/memory_2/300/300",
+	"https://picsum.photos/seed/memory_3/300/300",
+	"https://picsum.photos/seed/memory_4/300/300",
+	"https://picsum.photos/seed/memory_5/300/300",
+	"https://picsum.photos/seed/memory_6/300/300",
+	"https://picsum.photos/seed/memory_1/300/300",
+	"https://picsum.photos/seed/memory_2/300/300",
+	"https://picsum.photos/seed/memory_3/300/300",
+	"https://picsum.photos/seed/memory_4/300/300",
+	"https://picsum.photos/seed/memory_5/300/300",
+	"https://picsum.photos/seed/memory_6/300/300",
+];
+
+const figures = document.getElementsByClassName("card")
+const score = document.getElementById("score")
+
+let prevFigure = null
+let currentFigure = null
+
+let scoreCounter = 0
+
+function setupCards() {
+	shuffleArray(memoryPictureUrls)
+
+	for (let i = 0; i < figures.length; i++) {
+		const element = figures[i];
+
+		element.children[0].src = memoryPictureUrls[i]
+	}
+}
+
+setupCards()
+
+for (let i = 0; i < figures.length; i++) {
+	const element = figures[i];
+
+	element.addEventListener("click", (event) => {
+		console.log(event.target)
+		event.target.classList.toggle("active")
+
+		if (!prevFigure)
+			prevFigure = event.target
+		else {
+			currentFigure = event.target
+
+			if (currentFigure.children[0].src == prevFigure.children[0].src) {
+				currentFigure.classList.toggle("done")
+				prevFigure.classList.toggle("done")
+
+				scoreCounter += 1
+			} else {
+				scoreCounter -= 1
+			}
+
+			setTimeout((prevFigure, currentFigure) => {
+				prevFigure.classList.remove("active")
+				currentFigure.classList.remove("active")
+			}, 750, prevFigure, currentFigure)
+
+			prevFigure = null
+			currentFigure = null
+		}
+
+		score.innerText = scoreCounter.toString()
+
+		let didWin = true
+
+		for (let i = 0; i < figures.length; i++) {
+			const element = figures[i];
+
+			if (!element.classList.contains("done"))
+				didWin = false
+		}
+
+		if (didWin)
+			win()
+	})
+}
+
+function reset() {
+	scoreCounter = 0
+	score.innerText = scoreCounter.toString()
+
+	prevFigure = null
+	currentFigure = null
+
+	for (let i = 0; i < figures.length; i++) {
+		const element = figures[i];
+
+		element.classList.remove("active")
+		element.classList.remove("done")
+	}
+
+	setupCards()
+
+	confetti.remove()
+}
+
+function win() {
+	confetti.start(10000000, 0, 450)
+}

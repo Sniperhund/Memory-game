@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Memory Game</title>
     <link rel="stylesheet" href="/css/memorygame.css" />
+    <script src="/js/confetti.js"></script>
+    <script src="/js/app.js" defer></script>
   </head>
   <body>
     <section id="memory-wrapper">
-      <button>Start nyt spil</button>
+      <button onclick="reset()">Start nyt spil</button>
       <p>Score: <span id="score">0</span></p>
       <div id="memory-grid">
         <figure class="card">
