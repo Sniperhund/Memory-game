@@ -53,15 +53,24 @@ const memoryPictureUrls = [
 ];
 
 const figures = document.getElementsByClassName("card")
-const score = document.getElementById("score")
+const p1Score = document.getElementById("score1")
+const p2Score = document.getElementById("score2")
+
+const player1 = document.getElementById("p1")
+const player2 = document.getElementById("p2")
+
+const winMessage = document.getElementById("win-message")
 
 let prevFigure = null
 let currentFigure = null
 
-let scoreCounter = 0
+let p1ScoreCounter = 0
+let p2ScoreCounter = 0
 
 let guessedCards = []
 let hasCardsShuffled = true
+
+let isPlayer1 = false // <-- I use a function to switch this to be player 1 before the players get a chance to do anything :)
 
 function setupCards() {
 	shuffleArray(memoryPictureUrls)
@@ -95,10 +104,10 @@ for (let i = 0; i < figures.length; i++) {
 			currentFigure = event.target
 
 			if (currentFigure.children[0].src == prevFigure.children[0].src) {
-				scoreCounter += 1
+				givePoint(1, false)
 				guessedCards.push(currentFigure, prevFigure)
 			} else {
-				scoreCounter -= 1
+				givePoint(-1)
 
 				setTimeout((prevFigure, currentFigure) => {
 					prevFigure.classList.remove("active")
@@ -110,7 +119,8 @@ for (let i = 0; i < figures.length; i++) {
 			currentFigure = null
 		}
 
-		score.innerText = scoreCounter.toString()
+		p1Score.innerText = p1ScoreCounter.toString()
+		p2Score.innerText = p2ScoreCounter.toString()
 
 		let didWin = true
 
@@ -126,9 +136,37 @@ for (let i = 0; i < figures.length; i++) {
 	})
 }
 
+givePoint(0) // <-- This makes player 1's text larger :)
+
+function givePoint(amount, shouldSwitch = true) {
+	if (isPlayer1) {
+		p1ScoreCounter += amount
+
+		if (shouldSwitch) {
+			player2.classList.add("active")
+			player1.classList.remove("active")
+		}
+	} else {
+		p2ScoreCounter += amount
+
+		if (shouldSwitch) {
+			player2.classList.remove("active")
+			player1.classList.add("active")
+		}
+	}
+
+	if (shouldSwitch)
+		isPlayer1 = !isPlayer1
+}
+
 function reset() {
-	scoreCounter = 0
-	score.innerText = scoreCounter.toString()
+	p1ScoreCounter = 0
+	p2ScoreCounter = 0
+	p1Score.innerText = p1ScoreCounter.toString()
+	p2Score.innerText = p2ScoreCounter.toString()
+
+	isPlayer1 = false
+	givePoint(0)
 
 	prevFigure = null
 	currentFigure = null
@@ -145,8 +183,18 @@ function reset() {
 	confetti.remove()
 
 	guessedCards = []
+
+	winMessage.innerText = ""
 }
 
 function win() {
 	confetti.start(10000000, 0, 450)
+
+	if (p1ScoreCounter > p2ScoreCounter) {
+		winMessage.innerText = "Player 1 won!"
+	} else if (p1ScoreCounter < p2ScoreCounter) {
+		winMessage.innerText = "Player 2 won!"
+	} else {
+		winMessage.innerText = "Tie!"
+	}
 }

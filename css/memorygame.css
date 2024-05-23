@@ -87,3 +87,24 @@ button {
   width: 100%;
   object-fit: cover;
 }
+
+#score-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+#score-container .active {
+  font-size: 3rem;
+}
+
+#win-announce {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%);
+  z-index: 999;
+}
+
+#win-message {
+  font-size: 6rem;
+}

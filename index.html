@@ -12,7 +12,10 @@
   <body>
     <section id="memory-wrapper">
       <button onclick="reset()">Start nyt spil</button>
-      <p>Score: <span id="score">0</span></p>
+      <div id="score-container">
+        <p id="p1">Player 1 score: <span id="score1">0</span></p>
+        <p id="p2">Player 2 score: <span id="score2">0</span></p>
+      </div>
       <div id="memory-grid">
         <figure class="card">
           <img src="https://picsum.photos/seed/memory_1/300/300" alt="" />
@@ -52,5 +55,9 @@
         </figure>
       </div>
     </section>
+
+    <div id="win-announce">
+      <p id="win-message"></p>
+    </div>
   </body>
 </html>
