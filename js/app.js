@@ -60,6 +60,9 @@ let currentFigure = null
 
 let scoreCounter = 0
 
+let guessedCards = []
+let hasCardsShuffled = true
+
 function setupCards() {
 	shuffleArray(memoryPictureUrls)
 
@@ -76,7 +79,14 @@ for (let i = 0; i < figures.length; i++) {
 	const element = figures[i];
 
 	element.addEventListener("click", (event) => {
-		console.log(event.target)
+		if (!hasCardsShuffled){
+				setupCards()
+				hasCardsShuffled = true
+			}
+
+		if (guessedCards.includes(event.target))
+			return
+
 		event.target.classList.toggle("active")
 
 		if (!prevFigure)
@@ -85,18 +95,16 @@ for (let i = 0; i < figures.length; i++) {
 			currentFigure = event.target
 
 			if (currentFigure.children[0].src == prevFigure.children[0].src) {
-				currentFigure.classList.toggle("done")
-				prevFigure.classList.toggle("done")
-
 				scoreCounter += 1
+				guessedCards.push(currentFigure, prevFigure)
 			} else {
 				scoreCounter -= 1
-			}
 
-			setTimeout((prevFigure, currentFigure) => {
-				prevFigure.classList.remove("active")
-				currentFigure.classList.remove("active")
-			}, 750, prevFigure, currentFigure)
+				setTimeout((prevFigure, currentFigure) => {
+					prevFigure.classList.remove("active")
+					currentFigure.classList.remove("active")
+				}, 750, prevFigure, currentFigure)
+			}
 
 			prevFigure = null
 			currentFigure = null
@@ -113,7 +121,7 @@ for (let i = 0; i < figures.length; i++) {
 				didWin = false
 		}
 
-		if (didWin)
+		if (guessedCards.length == figures.length)
 			win()
 	})
 }
@@ -132,9 +140,11 @@ function reset() {
 		element.classList.remove("done")
 	}
 
-	setupCards()
+	hasCardsShuffled = false
 
 	confetti.remove()
+
+	guessedCards = []
 }
 
 function win() {
